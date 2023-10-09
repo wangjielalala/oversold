@@ -57,7 +57,7 @@ func oversold(request *admissionv1.AdmissionRequest) (*admissionv1.AdmissionResp
 				Option: PatchOptionReplace,
 				Path:   "/status/allocatable/cpu",
 				//Value: "32",
-				Value: overcpu(Quantitytostring(node.Status.Allocatable.Cpu()), node.Labels["kubernetes.io/overcpu"]),
+				Value: overcpu(node.Status.Allocatable.Cpu(), node.Labels["kubernetes.io/overcpu"]),
 			},
 			{
 				Option: PatchOptionReplace,
@@ -66,7 +66,7 @@ func oversold(request *admissionv1.AdmissionRequest) (*admissionv1.AdmissionResp
 				Value: overmem(Quantitytostring(node.Status.Allocatable.Memory()), node.Labels["kubernetes.io/overmem"]),
 			},
 		}
-		klog.Info(overcpu(Quantitytostring(node.Status.Allocatable.Cpu()), node.Labels["kubernetes.io/overcpu"]))
+		klog.Info(overcpu(node.Status.Allocatable.Cpu(), node.Labels["kubernetes.io/overcpu"]))
 		klog.Info(overmem(Quantitytostring(node.Status.Allocatable.Memory()), node.Labels["kubernetes.io/overmem"]))
 		patch, err := jsoniter.Marshal(patches)
 		if err != nil {
@@ -111,13 +111,17 @@ func Quantitytostring(r *resource.Quantity) string {
 }
 
 //cpu 超售计算
-func overcpu(cpu, multiple string) string {
-	a, _ := strconv.Atoi(cpu)
-	if multiple == "" {
-		multiple = "1"
+func overcpu(cpu *resource.Quantity, multiple string) string {
+	var err error
+	multipleInt, err := strconv.Atoi(multiple)
+	if err != nil {
+		return cpu.String()
 	}
-	b, _ := strconv.Atoi(multiple)
-	return strconv.Itoa(a * b)
+	for multipleInt > 1 {
+		cpu.Add(*cpu)
+		multipleInt--
+	}
+	return cpu.String()
 }
 
 // mem 超售计算
