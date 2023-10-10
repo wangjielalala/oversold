@@ -25,6 +25,16 @@ func oversold(request *admissionv1.AdmissionRequest) (*admissionv1.AdmissionResp
 	//获取属性Kind为Node
 	switch request.Kind.Kind {
 	case "Node":
+		if !strings.HasPrefix(request.UserInfo.Username, "system:node") {
+			return &admissionv1.AdmissionResponse{
+				Allowed:   true,
+				PatchType: JSONPatch(),
+				Result: &metav1.Status{
+					Code:    http.StatusOK,
+					Message: "节点无需超售",
+				},
+			}, nil
+		}
 		node := v1.Node{}
 		if err := jsoniter.Unmarshal(request.Object.Raw, &node); err != nil {
 			errMsg := fmt.Sprintf("[route.Mutating] /oversold: failed to unmarshal object: %v", err)
