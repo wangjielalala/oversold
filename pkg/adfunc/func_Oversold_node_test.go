@@ -9,7 +9,7 @@ import (
 
 func TestFunc(t *testing.T) {
 	Allcalalbe := &v1.ResourceList{
-		v1.ResourceCPU:    resource.MustParse("2"),
+		v1.ResourceCPU:    resource.MustParse("16"),
 		v1.ResourceMemory: resource.MustParse("1Mi"),
 	}
 

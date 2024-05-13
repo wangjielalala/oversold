@@ -123,14 +123,12 @@ func Quantitytostring(r *resource.Quantity) string {
 //cpu 超售计算
 func overcpu(cpu *resource.Quantity, multiple string) string {
 	var err error
-	multipleInt, err := strconv.Atoi(multiple)
+	multiplefloat, err := strconv.ParseFloat(multiple, 64)
 	if err != nil {
 		return cpu.String()
 	}
-	for multipleInt > 1 {
-		cpu.Add(*cpu)
-		multipleInt--
-	}
+	cpuAsDec := cpu.AsApproximateFloat64() * multiplefloat
+	cpu.Set(int64(cpuAsDec))
 	return cpu.String()
 }
 

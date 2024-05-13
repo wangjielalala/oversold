@@ -6,7 +6,7 @@ metadata:
   labels:
     app: mutating-webhook
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: mutating-webhook
@@ -18,7 +18,7 @@ spec:
       serviceAccountName: mutating-webhook
       containers:
         - name: goadmission
-          image: mritd/goadmission
+          image: registry.akusre.com/commerce/goadmission:v1.0.3
           imagePullPolicy: Always
           args:
             - --cert=/etc/kubernetes/ssl/dac.pem

@@ -29,6 +29,7 @@ kubectl create ns oversold  #创建命名空间
 sh oversold/deploy/cfssl/create.sh #生成密钥
 cd oversold/cfssl/mutatingwebhook/
 kubectl apply -f .
+kubectl label nodes cn-hongkong.192.168.16.75 kubernetes.io/overcpu=2 kubernetes.io/oversold=oversold
 ```
 
 ### 四、如何开启

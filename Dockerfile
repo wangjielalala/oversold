@@ -13,6 +13,8 @@ RUN set -ex \
     && export BUILD_VERSION=$(cat version) \
     && export BUILD_DATE=$(date "+%F %T") \
     && export COMMIT_SHA1=$(git rev-parse HEAD) \
+    && export GOOS=linux \
+    && export GOARCH=amd64 \
     && go install -ldflags \
         "-X 'main.version=${BUILD_VERSION}' \
         -X 'main.buildDate=${BUILD_DATE}' \
@@ -33,7 +35,7 @@ RUN set -ex \
     && echo ${TZ} > /etc/timezone \
     && rm -rf /var/cache/apk/*
 
-COPY --from=builder /go/bin/goadmission /goadmission
+COPY --from=builder /go/bin/linux_amd64/goadmission /goadmission
 
 ENTRYPOINT ["/goadmission"]
 

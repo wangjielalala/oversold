@@ -1,7 +1,7 @@
 BUILD_VERSION   	:= $(shell cat version)
 BUILD_DATE      	:= $(shell date "+%F %T")
 COMMIT_SHA1     	:= $(shell git rev-parse HEAD)
-DOCKER_IMAGE 	    := mritd/goadmission
+DOCKER_IMAGE 	    := registry.akusre.com/commerce/goadmission
 
 all: clean
 	gox -osarch="darwin/amd64 linux/386 linux/amd64 linux/arm" \
@@ -23,7 +23,7 @@ docker:
 	cat Dockerfile | docker build --build-arg http_proxy=${http_proxy} --build-arg https_proxy=${https_proxy} -t ${DOCKER_IMAGE}:${BUILD_VERSION} -f - .
 	docker tag ${DOCKER_IMAGE}:${BUILD_VERSION} ${DOCKER_IMAGE}:latest
 
-docker-push: docker
+docker-push:
 	docker push ${DOCKER_IMAGE}:${BUILD_VERSION}
 	docker push ${DOCKER_IMAGE}:latest
 
